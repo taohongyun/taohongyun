@@ -152,3 +152,30 @@ git push -u origin master     工作结束把本地的一起上传上去
 
  
 
+
+
+
+
+git checkout -b 新建的分支名字
+
+git clone 克隆
+
+git add 文件名
+
+git commit -m "属性"
+
+git push origin 上传到远程
+
+git merge 文件名  （当前分支必须要是被合并到的分支）
+
+git checkout 分支名  切换到那个分支
+
+git diff 文件名 另一个文件名 查看两个文件的不同
+
+git branch 查看所有本地分支
+
+git branch -r 查看所有远程分支
+
+git branch -d 分支名 删除本地分支
+
+git push origin --delete 分支名 删除远程分支
