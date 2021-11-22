@@ -29,7 +29,7 @@ config 配置
 
 在hello文件中打印本文件的__name__属性值，显示的是__main_
 
-
+redirect 重定向
 
 
 
