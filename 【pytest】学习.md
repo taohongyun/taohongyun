@@ -266,4 +266,137 @@ if __name__ == '__main__':
 
 我们可以把夹具看为一个过程
 
-它也可以是具备返回值的，（该过程创建某种资源），正是我们测试中所需要的。
+它也可以是具备返回值的，（该过程创建某种资源），正是我们测试中所需要的。 
+
+
+
+```
+import pytest
+@pytest.fixture()
+def before():
+    print(before)
+
+@pytest.fixture()
+def login():
+    print("login")
+    return "user"
+
+@pytest.mark.usefixtures("before")
+def test1(before):
+    print("test1()")
+def test2(login):
+    print("test2()",login)
+
+if __name__ == '__main__':
+    pytest.main("-s")
+```
+
+fixture参数化
+
+```
+import pytest
+@pytest.fixture()
+def before():
+    print(before)
+
+@pytest.fixture()
+def login():
+    print("login")
+    return "user"
+
+@pytest.mark.usefixtures("before")
+def test1(before):
+    print("test1()")
+def test2(login):
+    print("test2()",login)
+
+@pytest.fixture(params=[1,2,3])
+def init_data(request):
+    print("加入的参数为",request.param)
+    return request.param
+
+def test_date(init_data):
+    assert init_data>2
+
+
+if __name__ == '__main__':
+    pytest.main("-s")
+```
+
+### 插件
+
+#### HTML报告
+
+安装插件
+
+pip install pytest-html
+
+使用
+
+命令行方式
+
+pytest --html=储存路径/report.html
+
+配置文件
+
+[pytest]
+
+addopts = -s --html=./report.html
+
+
+
+
+
+#### 指定执行顺序
+
+安装插件
+
+pip install pytest.ordering
+
+使用
+
+添加装饰器 @pytest.mark.run(order=x)到函数或者方法上
+
+```
+import pytest
+@pytest.mark.run(order=4)
+def test1():
+    print("1")
+@pytest.mark.run(order=3)
+def test2():
+    print("2")
+
+@pytest.mark.run(order=2)
+def test3():
+    print("3")
+
+@pytest.mark.run(order=1)
+def test4():
+    print("4")
+if __name__ == '__main__':
+    print("-s")
+```
+
+
+
+#### 失败重试
+
+作用
+
+对于外部依赖，可能会失败的函数，在失败后多试几次
+
+安装插件
+
+pip install pytest-rerunfailures
+
+使用
+
+命令行方式
+
+pytest --reruns 5
+
+配置文件
+
+[pytest]
+
+addopts = -s --reruns 5
