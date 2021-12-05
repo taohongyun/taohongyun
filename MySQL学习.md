@@ -80,7 +80,7 @@ select DISTINCT 字段 from 表名;
 
 查找每个字段不重复的信息
 
-
+ 
 
 ### 字段链接  CONCAT
 
@@ -452,3 +452,529 @@ end
 as 评价
 
 from 表单
+
+
+
+
+
+## 聚合函数
+
+1. 简单的聚合函数
+
+sum 求和 avg 平均  max 最大  min 最小 
+
+select num(字段名) from 表名
+
+select avg(字段名) from 表名
+
+select max(字段名) from 表名
+
+select min(字段名) from 表名
+
+select num(字段名) as 求和，avg(字段名) as 求平均，max(字段名) as 最大值，max(字段名) as 最小值 from 表名
+
+count (distinct，字段名)，查看字段非重复的个数
+
+count(*)  用来统计表中的总行数
+
+2.  分组聚合 group by
+
+语法
+
+select 字段名，聚合函数(字段名)  from 表名  where 条件  group by 分祖表达式  order by 字段名
+
+注意：select 后边的字段必须是group by 后出现的字段，条件和排序可以省略
+
+3. group by 基础应用
+
+查询每家店铺的最小销售数量
+
+select 店号,min(销售数量) as 最小销售数量 from 表名 group by 店号
+
+查询每个大类对应的商品数
+
+select 大类名,count(*) as 每个大类对应的商品数 from 表名 group by 大类名
+
+查询店号为137的每家店铺，1号到3号的最小销量小于120
+
+select 店号,min(销售数量)  as 最小销量 from 表名 where 日期 between '2020-01-01' in '2020-01-03' group by 店号 in (1,3,7) having  最小销量 < 120
+
+注，查询自定义字段的时候用having
+
+4. 按表达式或者函数分组
+
+分祖也可以按表达式或者函数分组
+
+例：
+
+select 字段名 聚合函数(字段名) as 别名  from 表名  group by 聚合函数的字段名或者别名
+
+5. 按多个字段分组
+
+例：
+
+select 字段1，字段2，字段3  from 表单  group by  字段1，字段2，字段3
+
+6. 分组后再排序
+
+select 字段  from 表单  group by 字段  order by 字段 asc/desc
+
+7. limit 排名函数
+
+select 字段  from 表单  group by 字段  order by 字段 asc/desc  limit 3
+
+取前三名
+
+使用limit 排名前 一定要排序
+
+8. limit 分页
+
+select * from 表名 limit 行数
+
+## 多表合并
+
+### 多表数据合并 union
+
+  将两张表合并不去重复，select * from 表一 **union all**  select * from 表二
+
+  将两张表合并去重复，select * from 表一 **union**   select * from 表二
+
+注意：
+
+union 和 union all  都要求select语句具有相同的列数，而且字段顺序也相同
+
+
+
+## 连接查询
+
+### 多表配合使用
+
+根据多个表之间的关系查询其中数据，实现多表操作
+
+select a/b.重复的字段，不重复的字段1，不重复的字段2...
+
+form 表1 a  ，表2 b
+
+where a.重复字段 = b.重复字段
+
+注
+
+凡是字段名再from表中是唯一的，字段名前可以省略表名
+
+### 内部连接 from+where
+
+同上
+
+语法：select 字段名 from 表1，表2  where 表1.字段名 = 表2.字段名
+
+### 内部连接 join on 
+
+select  字段1 字段2 
+
+from 表一
+
+join 表二
+
+on  表一.连接的字段名1 = 表二.连接的字段名2
+
+
+
+
+
+
+
+# 增删改
+
+## 增数据
+
+insert into 表名(字段1，字段2，字段3)  values(增加的内容,增加的内容2...)
+
+insert into 表名  values(增加的内容,增加的内容2...)  # 增加的内容必须和表名中的内容对应 没有的用null占位
+
+insert into 表名 set 字段1 = 添加的值，字段2 = 添加的值...
+
+插入多行
+
+insert into 表名(字段1，字段2，字段3)  values(增加的内容,增加的内容2...)，(增加的内容,增加的内容2...)，(增加的内容,增加的内容2...)...
+
+insert into 表名  values(增加的内容,增加的内容2...)，values(增加的内容,增加的内容2...)，values(增加的内容,增加的内容2...)...
+
+添加子查询
+
+insert into 表名1
+
+select 字段1，字段2，字段3... from 表名2
+
+
+
+## 改数据
+
+### 修改单表数据
+
+update 表名
+
+set 字段名1= 新值1，字段名2 = 新值2...
+
+where  条件查询
+
+### 修改多表数据
+
+update 表名1 别名1
+
+inter  join  表名2  别名2
+
+on 连接条件
+
+set 字段名1 = 新值名1
+
+where 筛选条件
+
+### 删除数据
+
+条件删除
+
+单表删除：delete from 表名 筛选条件
+
+多表删除：delete  删除内容的表名1的别名1  from 删除内容的表名1和别名1  join 连接删除内容的表名和别名  on  连接条件 where  条件查询
+
+整表删除： truncate table 表名
+
+
+
+
+
+回滚和自增
+
+自增 identity (m,n) m、n 默认为1，1
+
+# 补充
+
+## 数据库中的元素
+
+数据库   datacase
+
+表   table
+
+字段  field
+
+记录  record
+
+## 常用的数据类型
+
+整数 int
+
+小数 declmal（总共几位数，小数点后边几位）
+
+字符串 varchar
+
+TINYINT UNSIGNED  无符号小整数 
+
+## 创建表格
+
+create table 表名（字段名  数据类型...）  #多个字段名字段类型需要逗号隔开
+
+## 增（插入）
+
+- insert into  表名  values (...)
+- insert into  表名 （字段名1，字段名2）  values (...)
+
+## 查
+
+select * from 表名
+
+## 改
+
+update  表名 set 字段1 = 值1...
+
+## 删
+
+delete from 表名 where  条件查询
+
+truncate table  表名
+
+## 删除表
+
+drop table 表名
+
+## 创建表约束
+
+**主键 primary key**  值不能重复  **auto_increment** 代表值自动增长
+
+**非空 not null**  不允许填空值
+
+**唯一 unique** 不允许 重复
+
+**默认值 default** 当不填写此值时会使用默认值，如果填写值以填写值为准
+
+语法
+
+create table 表名（字段名 数据类型 约束）
+
+## 自增长auto_increment 
+
+delete 后自增长 不从头开始
+
+truncate 后自增长 从头开始
+
+## 去重复显示
+
+select distinct 字段 from 表名
+
+## 模糊查询 like 
+
+select 字段名 from 表名 like  '  '
+
+引号内一个_代表一个字符  %代表多个字符
+
+## 范围查找
+
+in 在一个非连续的范围
+
+between ...and ... 在一个连续的范围 
+
+## 总记录数 count 
+
+select count(*) from 表名
+
+## 分组后筛选 having
+
+select * from 表单 group up 字段  having 筛选条件
+
+having 为先分组在筛选条件
+
+## 数据分页 limit 
+
+select * from limit 开始行，获取行数
+
+分页公式 （n-1）*m
+
+## 内连接
+
+select * from 表1  inner  join 表2  on 表1.字段 = 表2.字段
+
+## 隐式内连接
+
+select * from 表1，表2 
+
+where  表1.字段 = 表2.字段
+
+## 多表查询同名字段名 要在前边加上表名
+
+## 自关联
+
+同一张表做连接查询
+
+同一张表的不同字段关联
+
+## 子查询
+
+多个select查询语句嵌套
+
+子查询可以独立运行，主查询不能够独立运行
+
+
+
+## sql内置函数
+
+### concat  拼接字符串函数
+
+select concat （参数1，参数2 ...）
+
+参数可以是数字可以是字符串
+
+### length 字符个数
+
+字母 1：3  汉字1：3
+
+select length(参数)
+
+### 截取字符串（left、right、substeing）
+
+左截取
+
+select left(字段，左截取几位)
+
+右截取
+
+select right(字段，左截取几位)
+
+自定义从哪里开始截取
+
+SELECT SUBSTRING(字段，第几位开始截取,截取几位)
+
+## 去除空格
+
+去除左边空格 select ltrim(字段)
+
+去除右边空格 select rtrim(字段)
+
+去除两边空格 select trim(字段)
+
+## 四舍五入
+
+round
+
+select round(字段，保留到几位)
+
+## 随机排序
+
+ select rand()
+
+## 日期函数
+
+SELECT CURRENT_DATE 当前日期
+
+SELECT CURRENT_TIME  当前时间
+
+SELECT now()  当前时间加日期
+
+## 存储调用
+
+CREATE PROCEDURE stu()
+BEGIN
+
+
+select * from 表名
+
+
+END
+
+call stu()
+
+## 视图
+
+视图就是对查询的封装
+
+create view 视图名称 as select 语句
+
+类似一张不能够改动的表
+
+## 事务
+
+事务是多条更改数据操作的sql语句的集合、
+
+一个集合的数据一一致性，要么都失败要么都成功
+
+begin 开始事务
+
+rollback 回滚事务，放弃对表的修改
+
+commit 提交事务，对表修改生效
+
+没有begin代表没有事务，没有事务的操作都是实时生效的。
+
+## 回滚事务的操作
+
+### commit 
+
+提交事务，一旦提交，两个操作同时生效
+
+begin
+
+sql语句1
+
+sql语句2
+
+commit
+
+### rollback 
+
+回滚操作，如果开始一个事务，没有执行rollback和commit ，中间系统出问题，默认会执行rollback
+
+begin
+
+sql语句1
+
+sql语句2
+
+rollback
+
+## 索引
+
+create insex 索引名称 on 表名(字段名(长度))
+
+如果指定的字段为字符串，需要指定长度，建议长度与定义字段时的长度一致
+
+字段类型如果不是字符串，可以不填写长度部分
+
+## 索引的使用
+
+select * from 表名 where 筛选条件 
+
+where 条件后边的字段，数据库会自动查找是否偶索引。 
+
+## 查看索引
+
+show index from 表名
+
+系统会给主键自动建一个索引
+
+## 删除索引
+
+drop  index 索引名  on 表名
+
+## 索引优缺点
+
+优点
+
+索引大大提高了select，语句的查询速度
+
+缺点
+
+提高了查询速度，降低了更新的速度
+
+但是实际工作中查询占了大部分，所以建立索引是有必要的
+
+大量更新数据时，可以先删除索引，再插入数据，最后再添加索引，这样提高效率
+
+## 查看表的属性
+
+desc 表名
+
+## mysql命令行
+
+Windows cmd 命令窗口连接mysql 
+
+cd 到 mysql 路径下
+
+然后输入 MySQL -h [主机名(不是本机的话填写)] -u[用户名] -p
+
+-h 指定要连接的MySQL的ip地址或者住机名称，如省略则默认本地
+
+-u 指定连接的用户名'
+
+-p 执行命令后会提示输入密码'
+
+## 操作
+
+show databases    (查看所有数据库)
+
+use 数据库名      (打开数据库)
+
+show tables       (查看所有数据库)
+
+set names gbk      (windows 默认 gbk 格式 需要让sql 从utf-8转化成gbk)    
+
+sql 语句
+
+## 创建数据库
+
+create databaase 数据库名 default charset (默认字符集)；
+
+## 删除数据库
+
+drop datebase 数据库名 
+
+drop database if mytest 数据库名
+
+
+
+
+
+**2. 现有学生表如下:** 自动编号 学号 姓名 课程编号 课程名称 分数 1 2005001 张三 0001 数学 69 2 2005002 李四 0001 数学 89 3 2005001 张三 0001 数学 69 **删除除了自动编号不同, 其他都相同的学生冗余信息** 
+
+delete from sheet5 where 自动编号 not in 
+
+(SELECT tmp.自动编号 from(select min(自动编号) AS 自动编号 from sheet5 group by 姓名)tmp)
+
+SELECT * from sheet5
