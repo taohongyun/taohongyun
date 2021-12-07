@@ -977,4 +977,12 @@ delete from sheet5 where 自动编号 not in
 
 (SELECT tmp.自动编号 from(select min(自动编号) AS 自动编号 from sheet5 group by 姓名)tmp)
 
-SELECT * from sheet5
+SELECT * from sheet5     
+
+
+
+
+
+
+
+11
