@@ -661,7 +661,9 @@ where 筛选条件
 
 ## 常用的数据类型
 
-整数  
+整数  int
+
+小整数  tinyint
 
 小数 declmal（总共几位数，小数点后边几位）
 
@@ -684,7 +686,7 @@ select * from 表名
 
 ## 改
 
-update  表名 set 字段1 = 值1...
+update  表名 set 字段1 = 值1... where
 
 ## 删
 
@@ -834,7 +836,7 @@ CREATE PROCEDURE stu()
 BEGIN
 
 
-select * from 表名
+select * from 表名；
 
 
 END
