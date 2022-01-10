@@ -169,3 +169,52 @@ who -b   #上次系统启动时间
 sleep n;命令   #n秒后，执行某命令,注意分号
 ```
 
+### shutdown/poweroff/halt 关机/重启命令
+
+```
+shutdown -h now或/poweroff或halt    #立刻关机
+shutdown -h 时间                    #在指定的时间关机
+shutdown -H now                    #立即停机
+shutdown -r now 或者reboot          #重启
+```
+
+### diff 比较两个文件/文件夹之间的差异
+
+```
+diff 文件1 文件2       #比较文件1和文件2之间的差异
+diff 文件夹1/文件夹2/   #比较文件夹1和文件夹2的差异
+diff -r 文件夹1/文件夹2/  #利用递归的方式比较两个文件夹之间的差异
+```
+
+### apt-get 对软件包的操作命令
+
+```
+apt-get install 软件/包   #安装包
+apt-get update 软件/包    #更新软件
+apt-get remove 软件/包    #卸载软件
+apt-get upgarde 软件/包   #更新已安装的包
+apt-get clean 软件/包     #清除无用的包
+```
+
+### SSH
+
+```
+ssh 用户@ip地址  #远程ssh连接某主机 
+```
+
+### useradd添加用户
+
+```
+useradd 用户名   #添加某用户
+用户名 passwd    #添加密码
+useradd -r 用户名           #添加系统用户
+useradd -d 路径 用户名       #添加用户，并且指定，home目录 
+```
+
+### tail -f 滚动查看日志
+
+```
+tail -f tet 滚动查看名字为tet的文档内容，不进入编辑界面
+tail -f 1000 tet 滚动查看最后1000行文档内容
+```
+
