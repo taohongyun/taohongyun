@@ -50,7 +50,7 @@ sz  保存文件
 
 unzip apache-tomcat-8.5.73.zip
 
-#### 运行tomcat 
+#### 配置权限 
 
 cd apache-tomcat-8.5.73
 
@@ -163,10 +163,10 @@ nginx降权
 niginx给予root权限有风险所以要降权  (nginx有风险会导致整个系统都有风险)，添加一个降权用户
 
 ```
-user add www -s /sbin/nologin -M
+useradd www -s /sbin/nologin -M
 
 #-s：表示指定用户所用的shell 
-#nologin：不能访问linux系统  /sbin/noligin：表示不登录
+#nologin：不能访问linux系统  /sbin/nologin：表示不登录
 #-M：表示不能创建主目录
 
  cat /etc/passwd
@@ -180,9 +180,9 @@ user add www -s /sbin/nologin -M
 ```
 解压：
 tar -xzf nginx-1.10.2.tar.gz
--x:从tar包把文件提取出来  -z:压缩方式是gzip，所以解压也是用gzip  -f:表示gz文件路径
+-x:从tar包把文件提取出来(解压)  -z:压缩方式是gzip，所以解压也是用gzip(通过gzip压缩来进行解压)  -f:表示gz文件路径（代表是一个文件）
 
-配置：
+配置：切换到解压后的nginx包中
 ./configure --prefix=/data/server/nginx
 --prefix：指定配置地址
 
@@ -196,11 +196,12 @@ make install
 vim /data/server/nginx/conf/nginx.conf
 1.进入文件编辑文件
 2.找到#user nobody;
-3.在下边添加 uesr www  注意下边添加的没有#
+3.在下边添加 uesr www; 注意下边添加的没有# 注意user www后一定要加分号，不然报错
 
 ```
 
 ```
+常见问题：
 #在初次安装Nginx过程中，经常会出现这样的错误： make： *** 没有规则可以创建“default”需要的目标“build”。
 需要安装依赖包：
 yum install pcre-devel
@@ -264,5 +265,106 @@ netstat后命令详解：
 -w或--raw 显示RAW传输协议的连线状况。
 -x或--unix 此参数的效果和指定"-A unix"参数相同。
 --ip或--inet 此参数的效果和指定"-A inet"参数相同。
+```
+
+
+
+### 搭建第二个中间件Mysql
+
+#### mysql安装
+
+创建专用用户（降权）
+
+```
+useradd mysql -s /sbin/nologin/ -M 
+nologin ：表示不能访问linux 系统
+/sbin/nologin/ 表示不登录
+-M ：表示不能创建主目录
+
+cat /etc/passwd :检查是否创建成功
+userdel -r 用户名
+```
+
+```
+解压：
+tar -xzf mysql-5.6.35-linux-glibc2.5-x86_64.tar.gz -C /data/server
+-x:表示解压
+-z：表示通过gzip压缩来进行解压
+-f:表示一个文件
+-C：表示解压到指定目录中
+软链接：
+ln -s mysql-5.6.35-linux-glibc2.5-x86_64 mysql
+-s：表示进行软链接
+```
+
+```
+初始化mysql数据库
+/data/server/mysql/scripts/mysql_install_db --basedir=/data/server/mysql --datadir=/data/server/mysql/data/ --user=mysql
+ 
+basedir 安装软件的路径
+datadir 安装数据的路径
+user = mysql 指定用户名为mysql
+
+```
+
+```
+数据库配置文件管理
+mv /etc/my.cnf /etc/my.cnf-bak   #改名
+
+cp /data/server/mysql/support-files/my-default.cnf /etc/my.cnf
+```
+
+```
+数据库启动命令配置
+cp /data/server/mysql/support-files/mysql.server /etc/init.d/mysqld 
+chmod +x /etc/init.d/mysqld
+```
+
+```
+修改启动命令
+sed -i 's#nihao#hello#g' 1.txt  #将1.txt文件中的nihao替换成hell
+s 代表替换 
+g 代表全部
+
+sed -i 's#/usr/local/mysql#/data/server/mysql#g' /data/server/mysql/bin/mysqld_safe /etc/init.d/mysqld
+
+```
+
+```
+数据文件权限设置
+chown -R mysql.mysql /data/server/mysql/
+-R 递归修改目录
+```
+
+```
+将MySQL服务设置会开机自启动选项
+chkconfig --add mysqld
+chkconfig mysqld on
+```
+
+```
+netstat -tnulp | grep mysql  检查软件是否在运行
+```
+
+
+
+#### mysql服务端操作
+
+启动数据库
+
+```
+service mysqld start
+```
+
+停止数据库
+
+```
+service mysqld stop
+```
+
+重启数据库
+
+```
+service mysqld restart
 ```
 
