@@ -4,11 +4,11 @@
 
 - 建议使用环境：Linux + Nginx1.14 + PHP7.1 + MySQL5.6    LNMP
 
-​	Nginx：是一款轻量级的web服务器/反向代理服务器以及电子邮件（imap/pop3）代理服务器，优点是占用内存小，开发能力强
+		Nginx：是一款轻量级的web服务器/反向代理服务器以及电子邮件（imap/pop3）代理服务器，优点是占用内存小，开发能力强
 
-​	Mysql：开源免费支持多平台，是互联网公司应用最为广泛的关系型数据库
-
-​	PHP：是目前最流行的编程语言
+		Mysql：开源免费支持多平台，是互联网公司应用最为广泛的关系型数据库
+	
+		PHP：是目前最流行的编程语言
 
 - 工作原理
 
@@ -391,5 +391,92 @@ server {
 /data/server/nginx/sbin/nginx -s reload 重启
 /data/server/nginx/sbin/nginx -s stop 停止
 netstat -tnulp | grep nginx  检查是否启动/关闭
+```
+
+编写php简单程序
+
+```
+echo "<?php echo '<p>Hello World</p>'; ?>" > /data/server/nginx/html/test.php
+
+
+```
+
+
+
+### 部署项目
+
+解压代码并改名为shop
+
+```
+cd /data/soft/
+unzip shop.zip
+mv bestshop-php shop
+```
+
+把代码移动到nginx的html目录中 
+
+```
+mv /data/soft/shop /data/server/nginx/html
+```
+
+修改权限
+
+```
+chown -R www.www /data/server/nginx/html/shop
+```
+
+创建session文件夹
+
+```
+cd /var/lib/php
+mkdir sesiion
+```
+
+设置session可读可写可执行权限
+
+````
+chmod 777 session
+````
+
+设置runtime可读可写可执行操作权限
+
+```
+cd /data/server/nginx/html/shop/source
+chmod 777 runtime
+```
+
+### 网站配置
+
+根据文档进行配置 修改/data/server/nginx/http/source/application/database.php 
+
+```
+/data/server/nginx/html/shop/source/application
+gedit database.php 
+
+根据当前数据库的配置修改当前脚本的用户名和密码
+'database' => 'yoshop'
+'username' => 'root'
+'password' => ''
+```
+
+在当前数据库中创建数据库yoshop，并导入数据库文件 
+
+```
+create database yoshop;   #创建yoshop数据库
+use yoshop;   #打开数据库
+source /data/server/nginx/html/shop/doc/database/install.sql  #导入数据
+```
+
+修改nginx配置文件，将localhost 修改为 demo.lynn.cn
+
+```
+server {
+listen 80;
+# 替换成自己的域名
+server_name demo.iynn.cn; # 修改这行
+set $root_path /data/server/nginx/html/shop/web; # 修改这行
+注意：修改过后记得重新启动nginx
+
+/data/server/nginx/sbin/nginx -s reload  #重启nginx
 ```
 
