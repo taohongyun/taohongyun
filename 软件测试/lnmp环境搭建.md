@@ -7,7 +7,7 @@
 		Nginx：是一款轻量级的web服务器/反向代理服务器以及电子邮件（imap/pop3）代理服务器，优点是占用内存小，开发能力强
 
 		Mysql：开源免费支持多平台，是互联网公司应用最为广泛的关系型数据库
-	
+		
 		PHP：是目前最流行的编程语言
 
 - 工作原理
@@ -32,9 +32,7 @@
 
   
 
-
-
-### 搭建第一个中间件Nginx
+## 搭建Nginx
 
 #### Nginx安装
 
@@ -147,9 +145,7 @@ netstat后命令详解：
 --ip或--inet 此参数的效果和指定"-A inet"参数相同。
 ```
 
-
-
-### 搭建第二个中间件Mysql
+## 搭建Mysql
 
 #### mysql安装
 
@@ -273,9 +269,46 @@ source /etc/profile
 #让配置文件生效
 ```
 
+#### mysql远程连接
+
+```
+set password=password('123456');   # 设置用户密码
+
+grant all privileges on *.* to 'root' @'%' identified by '123456';   #使所有用户都可以以123456这个密码登录访问
+
+show global variables like 'port';  # 查看端口号
+
+firewall-cmd --add-service=mysql --permanent
+firewall-cmd --add-port=3306/tcp --permanent
+firewall-cmd --reload    #设置防火墙权限
+```
 
 
-### 搭建第三个中间件PHP
+
+#### 直接使用yum安装MySQL
+
+centos7没有yum包，要自己先下载
+
+```
+wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+rpm -ivh mysql-community-release-el7-5.noarch.rpm
+yum update
+yum install mysql-server
+chown mysql:mysql -R /var/lib/mysql//设置权限
+mysqld --initialize//初始化mysql
+systemctl start mysqld//启动mysql
+systemctl status mysqld//查看运行状态。看到绿色的run就ok啦
+设置好了我们直接登陆mysql就行，默认密码是空，然后如上设置下密码
+
+后面要开启远程登陆权限
+
+grant all privileges on *.* to 'root'@'%' identified by '123' with grant option;
+flush privileges;
+```
+
+
+
+## 搭建PHP
 
 1. PHP安装
 
@@ -317,7 +350,7 @@ service php-fpm restart
 
 
 
-### nigux整合php
+## nigux整合php
 
 备份原配置文件
 
@@ -403,7 +436,9 @@ echo "<?php echo '<p>Hello World</p>'; ?>" > /data/server/nginx/html/test.php
 
 
 
-### 部署项目
+
+
+## 部署项目
 
 解压代码并改名为shop
 
@@ -445,7 +480,9 @@ cd /data/server/nginx/html/shop/source
 chmod 777 runtime
 ```
 
-### 网站配置
+
+
+## 网站配置
 
 根据文档进行配置 修改/data/server/nginx/http/source/application/database.php 
 
@@ -478,5 +515,138 @@ set $root_path /data/server/nginx/html/shop/web; # 修改这行
 注意：修改过后记得重新启动nginx
 
 /data/server/nginx/sbin/nginx -s reload  #重启nginx
+
 ```
+
+
+
+
+
+
+
+## jdk安装
+
+安装jdk
+
+```
+yum search java|grep jdk  # 查看yum库中有哪些jdk版本
+
+yum install java-1.8.0-openjdk #选择安装java-1.8.0-openjdk 
+
+```
+
+配置相关环境变量
+
+```
+cd /etc    
+gedit profile
+
+# 文件打开后在最下边添加如下内容
+
+#set java environment
+
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-3.b14.el6_9.x86_64
+
+JRE_HOME=$JAVA_HOME/jre
+
+CLASS_PATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools:$JRE_HOME/lib
+
+PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
+
+export JAVA_HOME JRE_HOME CLASS_PATH PATH
+```
+
+让修改的环境变量生效
+
+```
+source /etc/profile
+```
+
+检查是否有效
+
+```
+java -version
+```
+
+
+
+## tomcat安装
+
+上传tomcat包
+
+```
+通过lrzsz工具上传
+yum install lrzsz # 安装lrzsz
+yum -y remove lrzsz  # 卸载lrzsz
+
+rz apache-tomcat-8.5.73.zip   # 上传tomcat压缩包
+unzip apache-tomcat-8.5.73.zip  # 解压
+
+```
+
+配置权限
+
+```
+cd apache-tomcat-8.5.73
+cd bin    #切换到apache-tomcat-8.5.73 文件夹下的bin目录
+chmod +x *.sh  #给所有.sh文件+x(添加可执行权限) 
+```
+
+运行tomcat
+
+```
+./startup.sh
+```
+
+关闭防火墙
+
+```
+ervice firewalld stop  关闭防火墙
+
+service firewalld start  打开防火墙
+
+service firewalld restart  重启防火墙
+```
+
+
+
+## 部署war包项目
+
+之前装过lrzsz工具，这里可以直接上传
+
+- rz + 回车  
+- 选择war包
+- mv + war包名 + webapps ：将war包移动到webapps文件夹中
+
+#### 修改tomcat端口
+
+cd ./apache-tomcat-8.5.73/conf    切换到conf文件夹
+
+vi server.xml  
+
+光标下键向下继续显示未显示出来的内容
+
+命令输入输入i ,进入可编辑模式，按住光标进行修改，
+
+修改完成后按esc退出修改
+
+命令输入输入：wq  退出并保存
+
+### 查看日志
+
+查看日志： tail -f xxx.log    # -f 从尾部开始看，为实时监听查看
+
+管道查看（关键字）：tail -f xxx.log | grep "tomcat"
+
+
+
+### 结束进程
+
+netstat -anp|grep 8080  查看占用8080端口的pid
+
+
+
+
+
+
 
