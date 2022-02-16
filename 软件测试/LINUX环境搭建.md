@@ -56,9 +56,9 @@ cd apache-tomcat-8.5.73
 
 cd bin 
 
-chomd +x  执行权限
+chmod +x  执行权限
 
-chomd +x *.sh 给予所有.sh文件可执行权限
+chmod +x *.sh 给予所有.sh文件可执行权限
 
  注意：文件默认只有可读权限的
 
